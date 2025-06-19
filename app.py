@@ -12,7 +12,7 @@ import streamlit.components.v1 as components
 # ---------- FOLDER SET-UP ----------
 UPLOAD_DIR      = Path("images")
 ANNOTATION_DIR  = Path("annotations")
-DATASET_DIRS    = [Path("dataset1"), Path("dataset2"), Path("dataset3")]
+DATASET_DIRS    = [Path("xview_sample"), Path("opensarship_sample"), Path("mstar_sample")]
 
 for d in [UPLOAD_DIR, ANNOTATION_DIR, *DATASET_DIRS]:
     d.mkdir(exist_ok=True)
