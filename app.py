@@ -5,6 +5,10 @@
 # /images (folder)
 # /annotations (folder)
 
+# Setup
+# pip install streamlit
+# pip install streamlit-drawable-canvas
+
 import base64
 import json
 import streamlit as st
