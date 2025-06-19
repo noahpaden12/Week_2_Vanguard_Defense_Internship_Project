@@ -1,0 +1,12 @@
+Objectives:
+
+During Week 2, you will transform the datasets chosen in Week 1 into a working browser‑based 
+annotation tool. By Friday, interns will demo a prototype that supports drawing bounding boxes 
+(or polygons) on images and exporting labels in a standard JSON format, laying the groundwork 
+for model training later. 
+
+1.  Stand up a lightweight web app (Streamlit, Gradio, or Flask). 
+2.  Implement core annotation widgets (rectangle, polygon, class dropdown). 
+3.  Persist annotations locally (COCO‑style JSON) with versioned saves. 
+4.  Practice modular Python structure and peer code review on GitHub. 
+5.  Present a live demo and explain technical design decisions.
