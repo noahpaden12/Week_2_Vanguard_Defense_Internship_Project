@@ -1,3 +1,5 @@
+#V8 - Gives me where COCO-formatted cordinates of rectangular and polyagonal bounding boxes just in console
+
 import base64
 import json
 import streamlit as st
@@ -183,26 +185,6 @@ with col_tools[3]:
     if st.button("Export Annotations"):
         save_annotation(bg_path, annotations)
         st.success("Manually exported to annotations folder.")
-with col_tools[4]:
-    if st.button("❌ Delete Last Export"):
-        last_path_str = st.session_state.last_export_path
-        if last_path_str:
-            path_obj = Path(last_path_str)
-            if path_obj.exists():
-                try:
-                    path_obj.unlink()  # Delete the file
-                    st.session_state.last_export_path = ""  # Clear session state
-                    st.success(f"Deleted: `{path_obj.name}`")
-                    st.rerun()  # Force full rerun to reflect deletion
-                except Exception as e:
-                    st.error(f"Error deleting file: {e}")
-            else:
-                st.warning(f"File already deleted or missing: `{path_obj}`")
-                st.session_state.last_export_path = ""
-                st.rerun()
-        else:
-            st.warning("No export path recorded.")
-
 
 
 mode = st.session_state.mode
@@ -244,6 +226,7 @@ canvas.addEventListener("mousedown", e => {{
         isDrag = true;
     }} else {{
         curPoly.push([e.offsetX, e.offsetY]);
+        console.log("Current polygon points:", curPoly);  // <-- This line was added
         redrawAll();
     }}
 }});
@@ -258,6 +241,7 @@ canvas.addEventListener("mousemove", e => {{
 canvas.addEventListener("mouseup", e => {{
     if (mode === "rect" && isDrag) {{
         rects.push([startX, startY, e.offsetX - startX, e.offsetY - startY]);
+        console.log("Added rectangle:", [startX, startY, e.offsetX - startX, e.offsetY - startY]);
         isDrag = false;
         redrawAll();
     }}
@@ -278,4 +262,4 @@ redrawAll();
 st.components.v1.html(canvas_html + f"<!-- {st.session_state.reset_counter} -->", height=600, scrolling=False)
 
 # ---------- AUTO SAVE ----------
-save_annotation(bg_path, annotations)
+#save_annotation(bg_path, annotations)
