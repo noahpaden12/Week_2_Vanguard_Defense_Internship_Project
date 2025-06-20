@@ -10,3 +10,17 @@ for model training later.
 3.  Persist annotations locally (COCO‑style JSON) with versioned saves. 
 4.  Practice modular Python structure and peer code review on GitHub. 
 5.  Present a live demo and explain technical design decisions.
+
+Make Sure to Have:
+
+1. GitHub Repo Updates containing:  
+  app.py or equivalent main file.  
+  requirements.txt.  
+  annotation_schema.json (example COCO format).  
+  docs/ folder with setup guide (README_prototype.md). 
+ 
+2.  Live Demo Link (Streamlit‑share URL or public Replit/HF Space). 
+ 
+3.  Short Demo Video (≤ 90 s) showing labeling flow & JSON export. 
+ 
+4.  Mini Slide Deck (4 slides): Architecture, UI snapshot, JSON example, next steps 
