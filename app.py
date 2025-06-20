@@ -274,6 +274,8 @@ prev_col, canvas_col, next_col = st.columns([1, 10, 1])
 
 with prev_col:
     if st.button("⬅️", key="prev_btn"):
+        st.session_state.annotations_dict[img_key] = {"rects": [], "polys": []}
+        st.session_state["annotation_json"] = json.dumps({"rects": [], "polys": []})
         st.session_state.current_index = max(0, st.session_state.current_index - 1)
         st.rerun()
 
@@ -286,6 +288,9 @@ with canvas_col:
 
 with next_col:
     if st.button("➡️", key="next_btn"):
+        st.session_state.annotations_dict[img_key] = {"rects": [], "polys": []}
+        st.session_state["annotation_json"] = json.dumps({"rects": [], "polys": []})
+        st.session_state.reset_counter += 1
         st.session_state.current_index = min(len(images) - 1, st.session_state.current_index + 1)
         st.rerun()
 
