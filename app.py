@@ -1,12 +1,13 @@
 # app.py – Image annotation tool with on-screen coordinate display
-# ----------------------------------------------------------------
+# -----------------------------------------------------------------
 # Run with:
 #     streamlit run app.py
 
 import base64
 import json
-import streamlit as st
 from pathlib import Path
+
+import streamlit as st
 import streamlit.components.v1 as components
 
 # ---------- FOLDER SET-UP ----------
@@ -24,13 +25,13 @@ st.title("Image Annotation Tool")
 # ---------- SESSION STATE ----------
 def init_state():
     defaults = {
-        "selected_dataset": None,
-        "current_index": 0,
-        "mode": "rect",
-        "annotations_dict": {},
-        "selected_class": "Unlabeled",
-        "last_export_path": "",
-        "reset_counter": 0,
+        "selected_dataset" : None,
+        "current_index"    : 0,
+        "mode"             : "rect",
+        "annotations_dict" : {},
+        "selected_class"   : "Unlabeled",
+        "last_export_path" : "",
+        "reset_counter"    : 0,
     }
     for k, v in defaults.items():
         if k not in st.session_state:
@@ -38,12 +39,11 @@ def init_state():
 init_state()
 
 # ---------- HELPERS ----------
-
 def to_data_url(path: Path) -> str:
     with open(path, "rb") as f:
         return "data:image/png;base64," + base64.b64encode(f.read()).decode()
 
-def get_class_id(name):          # class_options defined later
+def get_class_id(name):                # class_options defined later
     return class_options.index(name) + 1
 
 def get_annotation_path(img_path: Path) -> Path:
@@ -134,6 +134,7 @@ if uploaded:
     st.session_state.current_index = 0
 
 DEFAULT_IMG = Path("default.jpg")
+
 if st.session_state.selected_dataset:
     images = (
         sorted(st.session_state.selected_dataset.glob("*.jpg")) +
@@ -145,16 +146,6 @@ if st.session_state.selected_dataset:
         st.session_state.current_index = current_index
         bg_path = images[current_index]
         st.markdown(f"### Image {current_index + 1} of {len(images)}: `{bg_path.name}`")
-
-        col1, col2 = st.columns([1, 1])
-        with col1:
-            if st.button("⬅️ Previous"):
-                st.session_state.current_index = max(0, st.session_state.current_index - 1)
-                st.rerun()
-        with col2:
-            if st.button("Next ➡️"):
-                st.session_state.current_index = min(len(images) - 1, st.session_state.current_index + 1)
-                st.rerun()
     else:
         st.warning("No images found in selected dataset.")
         bg_path = DEFAULT_IMG
@@ -177,10 +168,10 @@ st.selectbox("Class Label", class_options,
              key="selected_class")
 
 st.markdown("### Annotation Tools")
-c0, c1, c2, c3, _ = st.columns(5)
-if c0.button("Rectangular"): 
+c0, c1, c2, _, _ = st.columns(5)
+if c0.button("Rectangular"):
     st.session_state.mode = "rect"
-if c1.button("Polygonal"):   
+if c1.button("Polygonal"):
     st.session_state.mode = "polygon"
 if c2.button("Reset Annotations"):
     st.session_state.annotations_dict[img_key] = {"rects": [], "polys": []}
@@ -197,7 +188,7 @@ canvas_html = f"""
         style="border:1px solid #888; background:url('{img_url}'); background-size:cover;"></canvas>
 
 <textarea id="coordsBox"
-          style="width:800px;height:100px;margin-top:8px;" readonly></textarea>
+          style="width:800px;height:70px;margin-top:4px;" readonly></textarea>
 
 <textarea id="jsonData" style="display:none;"></textarea>
 
@@ -213,26 +204,18 @@ let curPoly     = [];
 let startX, startY, isDrag = false;
 
 function formatPointsFlat(points) {{
-    // Flatten points [[x,y], [x,y], ...] => "x1, y1, x2, y2, ..."
     return points.flat().join(", ");
 }}
 
 function updateCoordsBox() {{
-    // Format rects: each rect is [x, y, w, h]
     const formattedRects = rects.map(r => {{
         const [x, y, w, h] = r;
         return `[${{x}}, ${{y}}, ${{w}}, ${{h}}]`;
     }});
-
-    // Format polygons as JSON strings of nested coordinate arrays
     const formattedPolys = polys.map(p => JSON.stringify(p));
     const formattedCurPoly = curPoly.length > 1 ? [JSON.stringify(curPoly)] : [];
-
-    // Combine all and join by newlines
     const combined = [...formattedRects, ...formattedPolys, ...formattedCurPoly];
     coordsBox.value = combined.join("\\n");
-
-    // Also update hidden textarea with JSON string of annotations
     jsonData.value = JSON.stringify({{rects: rects, polys: polys}});
 }}
 
@@ -253,7 +236,6 @@ function redrawAll() {{
     updateCoordsBox();
 }}
 
-/* Mouse handlers */
 canvas.addEventListener("mousedown", e => {{
     if (mode === "rect") {{
         startX = e.offsetX; startY = e.offsetY; isDrag = true;
@@ -269,7 +251,6 @@ canvas.addEventListener("mousemove", e => {{
     }}
 }});
 
-/* -------------- SINGLE-RECTANGLE LOGIC -------------- */
 canvas.addEventListener("mouseup", e => {{
     if (mode === "rect" && isDrag) {{
         rects = [[startX, startY, e.offsetX - startX, e.offsetY - startY]];
@@ -277,7 +258,6 @@ canvas.addEventListener("mouseup", e => {{
         redrawAll();
     }}
 }});
-/* ---------------------------------------------------- */
 
 canvas.addEventListener("dblclick", e => {{
     if (mode === "polygon" && curPoly.length > 2) {{
@@ -289,13 +269,27 @@ redrawAll();
 </script>
 """
 
-components.html(
-    canvas_html + f"<!-- {st.session_state.reset_counter} -->",
-    height=680,
-    scrolling=False,
-)
+# ---------- LAYOUT: BUTTONS BESIDE THE CANVAS ----------
+prev_col, canvas_col, next_col = st.columns([1, 10, 1])
 
-# Hidden Streamlit textarea holding JSON data from JS (initial value)
+with prev_col:
+    if st.button("⬅️", key="prev_btn"):
+        st.session_state.current_index = max(0, st.session_state.current_index - 1)
+        st.rerun()
+
+with canvas_col:
+    components.html(
+        canvas_html + f"<!-- {st.session_state.reset_counter} -->",
+        height=680,
+        scrolling=False,
+    )
+
+with next_col:
+    if st.button("➡️", key="next_btn"):
+        st.session_state.current_index = min(len(images) - 1, st.session_state.current_index + 1)
+        st.rerun()
+
+# ---------- HIDDEN TEXTAREA & SAVE ----------
 annotation_json = st.text_area(
     "Annotation Data (hidden)",
     value=json.dumps(annotations),
@@ -304,7 +298,6 @@ annotation_json = st.text_area(
     label_visibility="collapsed"
 )
 
-# Button to save annotations from the textarea back to session state and to file
 if st.button("Save Annotations from Canvas"):
     try:
         data = json.loads(annotation_json)
