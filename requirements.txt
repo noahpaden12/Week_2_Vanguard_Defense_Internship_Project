@@ -18,9 +18,6 @@ Make Sure to Have:
   requirements.txt.  
   annotation_schema.json (example COCO format).  
   docs/ folder with setup guide (README_prototype.md). 
- 
 2.  Live Demo Link (Streamlit‑share URL or public Replit/HF Space). 
- 
 3.  Short Demo Video (≤ 90 s) showing labeling flow & JSON export. 
- 
 4.  Mini Slide Deck (4 slides): Architecture, UI snapshot, JSON example, next steps 
