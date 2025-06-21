@@ -126,7 +126,7 @@ for ds in DATASET_DIRS:
         st.session_state.selected_dataset = ds
         st.session_state.current_index = 0
 
-uploaded = st.sidebar.file_uploader("Upload an image", type=["png", "jpg", "jpeg"])
+uploaded = st.sidebar.file_uploader("Upload an image", type=["png", "jpg", "jpeg", "JPG", "JPEG", "PNG"])
 if uploaded:
     dest = UPLOAD_DIR / uploaded.name
     dest.write_bytes(uploaded.getbuffer())
@@ -136,19 +136,33 @@ if uploaded:
 DEFAULT_IMG = Path("default.jpg")
 
 if st.session_state.selected_dataset:
+    # Add support for more file extensions including uppercase variants
     images = (
         sorted(st.session_state.selected_dataset.glob("*.jpg")) +
+        sorted(st.session_state.selected_dataset.glob("*.JPG")) +
         sorted(st.session_state.selected_dataset.glob("*.jpeg")) +
-        sorted(st.session_state.selected_dataset.glob("*.png"))
+        sorted(st.session_state.selected_dataset.glob("*.JPEG")) +
+        sorted(st.session_state.selected_dataset.glob("*.png")) +
+        sorted(st.session_state.selected_dataset.glob("*.PNG")) +
+        sorted(st.session_state.selected_dataset.glob("*.tif")) +
+        sorted(st.session_state.selected_dataset.glob("*.TIF")) +
+        sorted(st.session_state.selected_dataset.glob("*.tiff")) +
+        sorted(st.session_state.selected_dataset.glob("*.TIFF")) +
+        sorted(st.session_state.selected_dataset.glob("*.bmp")) +
+        sorted(st.session_state.selected_dataset.glob("*.BMP"))
     )
-    if images:
+    
+    # Debug information
+    if not images:
+        st.warning(f"No supported images found in {st.session_state.selected_dataset}")
+        st.info("Files in directory: " + ", ".join([f.name for f in st.session_state.selected_dataset.iterdir() if f.is_file()][:10]))
+        st.info("Supported formats: .jpg/.JPG, .jpeg/.JPEG, .png/.PNG, .tif/.TIF, .tiff/.TIFF, .bmp/.BMP")
+        bg_path = DEFAULT_IMG
+    else:
         current_index = max(0, min(st.session_state.current_index, len(images) - 1))
         st.session_state.current_index = current_index
         bg_path = images[current_index]
         st.markdown(f"### Image {current_index + 1} of {len(images)}: `{bg_path.name}`")
-    else:
-        st.warning("No images found in selected dataset.")
-        bg_path = DEFAULT_IMG
 else:
     st.info("Please select a dataset or upload an image to begin.")
     bg_path = DEFAULT_IMG
